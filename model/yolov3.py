@@ -25,15 +25,16 @@ class Yolov3(nn.Module):
         super(Yolov3, self).__init__()
 
         self.__anchors = torch.FloatTensor(cfg.MODEL["ANCHORS"])
-        self.__strides = torch.FloatTensor(cfg.MODEL["STRIDES"])
-        self.__nC = cfg.DATA["NUM"]
-        self.__out_channel = cfg.MODEL["ANCHORS_PER_SCLAE"] * (self.__nC + 5)
+        self.__strides = torch.FloatTensor(cfg.MODEL["STRIDES"]) #
+        self.__nC = cfg.DATA["NUM"] # 20
+        self.__out_channel = cfg.MODEL["ANCHORS_PER_SCLAE"] * (self.__nC + 5) # 75
+
 
         self.__backnone = Darknet53()
         self.__fpn = FPN_YOLOV3(fileters_in=[1024, 512, 256],
                                 fileters_out=[self.__out_channel, self.__out_channel, self.__out_channel])
 
-        # small
+        # small nC=20; anchors=[(1.25, 1.625), (2.0, 3.75), (4.125, 2.875)] STRIDES=8
         self.__head_s = Yolo_head(nC=self.__nC, anchors=self.__anchors[0], stride=self.__strides[0])
         # medium
         self.__head_m = Yolo_head(nC=self.__nC, anchors=self.__anchors[1], stride=self.__strides[1])

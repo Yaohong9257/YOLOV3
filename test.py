@@ -92,7 +92,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--weight_path', type=str, default='weight/best.pt', help='weight file path')
     parser.add_argument('--visiual', type=str, default='./data/test', help='test data path or None')
-    parser.add_argument('--eval', action='store_true', default=True, help='eval the mAP or not')
+    parser.add_argument('--eval', action='store_true', default=False, help='eval the mAP or not')
     parser.add_argument('--gpu_id', type=int, default=0, help='gpu id')
     opt = parser.parse_args()
 
