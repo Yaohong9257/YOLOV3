@@ -12,7 +12,7 @@ import random
 import argparse
 from eval.evaluator import *
 from utils.tools import *
-from tensorboardX import SummaryWriter
+# from tensorboardX import SummaryWriter
 import config.yolov3_config_voc as cfg
 from utils import cosine_lr_scheduler
 

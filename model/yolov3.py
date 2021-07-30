@@ -50,7 +50,8 @@ class Yolov3(nn.Module):
 
         x_s, x_m, x_l = self.__backnone(x)
         x_s, x_m, x_l = self.__fpn(x_l, x_m, x_s)
-
+        print("Yolov3 forward:", x_s.shape, x_m.shape, x_l.shape);
+        
         out.append(self.__head_s(x_s))
         out.append(self.__head_m(x_m))
         out.append(self.__head_l(x_l))
