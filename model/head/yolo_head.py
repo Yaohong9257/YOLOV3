@@ -40,13 +40,19 @@ class Yolo_head(nn.Module):
         conv_raw_conf = p[:, :, :, :, 4:5]
         conv_raw_prob = p[:, :, :, :, 5:]
 
+
         y = torch.arange(0, output_size).unsqueeze(1).repeat(1, output_size)
+
+        print("Yolo_head forward __decode2 y::: ",torch.arange(0, output_size), torch.arange(0, output_size).unsqueeze(1),  y);
         x = torch.arange(0, output_size).unsqueeze(0).repeat(output_size, 1)
+        print("Yolo_head forward __decode2 x::: ",torch.arange(0, output_size), torch.arange(0, output_size).unsqueeze(0),  x);
         grid_xy = torch.stack([x, y], dim=-1)
         grid_xy = grid_xy.unsqueeze(0).unsqueeze(3).repeat(batch_size, 1, 1, 3, 1).float().to(device)
 
         pred_xy = (torch.sigmoid(conv_raw_dxdy) + grid_xy) * stride
+        print("Yolo_head forward __decode2 pred_xy pre ", (torch.sigmoid(conv_raw_dxdy) + grid_xy), " pred_xy:", pred_xy);
         pred_wh = (torch.exp(conv_raw_dwdh) * anchors) * stride
+
         pred_xywh = torch.cat([pred_xy, pred_wh], dim=-1)
         pred_conf = torch.sigmoid(conv_raw_conf)
         pred_prob = torch.sigmoid(conv_raw_prob)
