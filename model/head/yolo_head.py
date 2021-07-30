@@ -10,23 +10,30 @@ class Yolo_head(nn.Module):
         self.__nA = len(anchors)
         self.__nC = nC
         self.__stride = stride
-
+        print("Yolo_head __init__:",self.__anchors , self.__nA, self.__nC, self.__stride  );
 
     def forward(self, p):
         bs, nG = p.shape[0], p.shape[-1]
-        p = p.view(bs, self.__nA, 5 + self.__nC, nG, nG).permute(0, 3, 4, 1, 2)
 
+        print("Yolo_head forward bs ",bs, " nG: ", nG );
+        p = p.view(bs, self.__nA, 5 + self.__nC, nG, nG)
+        print("Yolo_head forward p view ", p.shape );
+        p = p.permute(0, 3, 4, 1, 2)
+        print("Yolo_head forward p permute", p.shape );
         p_de = self.__decode(p.clone())
-
+        print("Yolo_head forward p_de ", p_de.shape );
         return (p, p_de)
 
 
     def __decode(self, p):
         batch_size, output_size = p.shape[:2]
 
+        print("Yolo_head forward __decode1 batch_size ", batch_size, " output_size:",output_size );
         device = p.device
         stride = self.__stride
         anchors = (1.0 * self.__anchors).to(device)
+
+        print("Yolo_head forward __decode1 device ", device, " stride:",stride, " anchors:", anchors.shape , anchors);
 
         conv_raw_dxdy = p[:, :, :, :, 0:2]
         conv_raw_dwdh = p[:, :, :, :, 2:4]
@@ -44,5 +51,13 @@ class Yolo_head(nn.Module):
         pred_conf = torch.sigmoid(conv_raw_conf)
         pred_prob = torch.sigmoid(conv_raw_prob)
         pred_bbox = torch.cat([pred_xywh, pred_conf, pred_prob], dim=-1)
+
+        print("Yolo_head forward __decode2 not self.training ", not self.training); 
+
+        if not self.training:
+            aa = pred_bbox.view(-1, 5 + self.__nC)
+            print("Yolo_head forward __decode2 not self.training pred_bbox", aa.shape); 
+        else: 
+            print("Yolo_head forward __decode2 self.training pred_bbox", pred_bbox.shape); 
 
         return pred_bbox.view(-1, 5 + self.__nC) if not self.training else pred_bbox
